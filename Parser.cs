@@ -24,7 +24,7 @@ public class Parser
 
         string content = File.ReadAllText(_inputFilePath);
 
-        var entryPattern = new Regex(@"\tDate:\t(?<date>.+?)\n(?<body>(.*?))(?=(\tDate:\t|\z))", RegexOptions.Singleline);
+        var entryPattern = new Regex(@"\tDate:\t(?<date>.+?)\r?\n(?<body>(.*?))(?=(\tDate:\t|\z))", RegexOptions.Singleline);
 
         var matches = entryPattern.Matches(content);
 
@@ -122,6 +122,12 @@ public class Parser
 
     private DateTime ParseDate(string dateText)
     {
+        int atIndex = dateText.IndexOf(" at ");
+        if (atIndex >= 0)
+        {
+            dateText = dateText.Substring(0, atIndex);
+        }
+
         if (DateTime.TryParse(dateText, out DateTime result))
         {
             return result;
